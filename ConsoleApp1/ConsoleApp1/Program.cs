@@ -55,14 +55,13 @@ namespace ConsoleApp1
                 var currentKey = baseDictKeys[i];
                 var previousKey = i == 0 ? 0 : baseDictKeys[i - 1];
 
-                diffDict[currentKey] = currentKey - previousKey;
+                diffDict[i] = currentKey - previousKey;
             }
 
 
             for (int i = 2; i <= n; i++)
             {
                 long previousValue = 0;
-                int previousKey = 0;
                 prevDict = new Dictionary<int, long>(nextDict);
 
                 for (int j = 0; j < baseDictKeysCount; j++)
@@ -77,7 +76,7 @@ namespace ConsoleApp1
                         }
                         else
                         {
-                            previousValue += (baseDictKeys[j] - previousKey) * baseDict[baseDictKeys[j]];
+                            previousValue += diffDict[j] * baseDict[baseDictKeys[j]];
                             nextDict[baseDictKeys[j]] = previousValue % Modulo;
                         }
                     }
@@ -90,12 +89,10 @@ namespace ConsoleApp1
                         }
                         else
                         {
-                            previousValue += (baseDictKeys[j] - previousKey) * prevDict[baseDict[baseDictKeys[j]]];
+                            previousValue += diffDict[j] * prevDict[baseDict[baseDictKeys[j]]];
                             nextDict[baseDictKeys[j]] = previousValue % Modulo;
                         }
                     }
-
-                    previousKey = baseDictKeys[j];
                 }
 
                 //printDict(nextDict);
@@ -127,7 +124,7 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            long result = Result.pSequences(899, 1781623860);
+            long result = Result.pSequences(899, 78162386);
             //long result = Result.pSequences(3, 4);
             //long result = Result.pSequences(3, 10);
             Console.WriteLine($"result {result}");
