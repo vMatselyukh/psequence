@@ -72,12 +72,12 @@ namespace ConsoleApp1
                         if (baseDictKeys[j] == 1)
                         {
                             previousValue = baseDict[baseDictKeys[j]];
-                            nextDict[baseDictKeys[j]] = previousValue % Modulo;
+                            nextDict[baseDictKeys[j]] = previousValue > Modulo ? previousValue % Modulo : previousValue;
                         }
                         else
                         {
                             previousValue += diffDict[j] * baseDict[baseDictKeys[j]];
-                            nextDict[baseDictKeys[j]] = previousValue % Modulo;
+                            nextDict[baseDictKeys[j]] = previousValue > Modulo ? previousValue % Modulo : previousValue;
                         }
                     }
                     else
@@ -85,12 +85,12 @@ namespace ConsoleApp1
                         if (baseDictKeys[j] == 1)
                         {
                             previousValue = prevDict[p];
-                            nextDict[baseDictKeys[j]] = previousValue % Modulo;
+                            nextDict[baseDictKeys[j]] = previousValue > Modulo ? previousValue % Modulo : previousValue;
                         }
                         else
                         {
                             previousValue += diffDict[j] * prevDict[baseDict[baseDictKeys[j]]];
-                            nextDict[baseDictKeys[j]] = previousValue % Modulo;
+                            nextDict[baseDictKeys[j]] = previousValue > Modulo ? previousValue % Modulo : previousValue;
                         }
                     }
                 }
@@ -124,7 +124,8 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            long result = Result.pSequences(899, 78162386);
+            long result = Result.pSequences(899, 1178162386);
+            //long result = Result.pSequences(899, 78162386);
             //long result = Result.pSequences(3, 4);
             //long result = Result.pSequences(3, 10);
             Console.WriteLine($"result {result}");
