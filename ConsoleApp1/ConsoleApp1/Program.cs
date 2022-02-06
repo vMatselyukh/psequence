@@ -20,9 +20,12 @@ namespace ConsoleApp1
         public static long pSequences(int n, int p)
         {
             const int Modulo = 1000000007;
-            SortedDictionary<int, int> baseDict = new SortedDictionary<int, int>();
+            SortedDictionary<int, int> sortedBaseDict = new SortedDictionary<int, int>();
+            Dictionary<int, int> baseDict = new Dictionary<int, int>();
+            Dictionary<int, int> diffDict = new Dictionary<int, int>();
             Dictionary<int, long> prevDict = new Dictionary<int, long>();
             Dictionary<int, long> nextDict = new Dictionary<int, long>();
+
 
             int squareRoot = (int)Math.Sqrt(p);
 
@@ -30,21 +33,31 @@ namespace ConsoleApp1
             {
                 int division = p / i;
 
-                baseDict[i] = division;
+                sortedBaseDict[i] = division;
                 prevDict[i] = 0;
                 nextDict[i] = 0;
 
-                if (!baseDict.ContainsKey(division))
+                if (!sortedBaseDict.ContainsKey(division))
                 {
-                    baseDict[division] = i;
+                    sortedBaseDict[division] = i;
                     prevDict[division] = 0;
                     nextDict[division] = 0;
                 }
             }
 
-            //printDict(baseDict);
+            baseDict = new Dictionary<int, int>(sortedBaseDict);
 
-            var baseDictKeys = baseDict.Keys;
+            var baseDictKeys = baseDict.Keys.ToList();
+            var baseDictKeysCount = baseDict.Count;
+
+            for (int i = 0; i < baseDictKeysCount; i++)
+            {
+                var currentKey = baseDictKeys[i];
+                var previousKey = i == 0 ? 0 : baseDictKeys[i - 1];
+
+                diffDict[currentKey] = currentKey - previousKey;
+            }
+
 
             for (int i = 2; i <= n; i++)
             {
@@ -52,37 +65,37 @@ namespace ConsoleApp1
                 int previousKey = 0;
                 prevDict = new Dictionary<int, long>(nextDict);
 
-                foreach (var baseDictElement in baseDict)
+                for (int j = 0; j < baseDictKeysCount; j++)
                 {
                     //if nothing in previous dict
                     if (i == 2)
                     {
-                        if (baseDictElement.Key == 1)
+                        if (baseDictKeys[j] == 1)
                         {
-                            previousValue = baseDictElement.Value;
-                            nextDict[baseDictElement.Key] = previousValue % Modulo;
+                            previousValue = baseDict[baseDictKeys[j]];
+                            nextDict[baseDictKeys[j]] = previousValue % Modulo;
                         }
                         else
                         {
-                            previousValue += (baseDictElement.Key - previousKey) * baseDictElement.Value;
-                            nextDict[baseDictElement.Key] = previousValue % Modulo;
+                            previousValue += (baseDictKeys[j] - previousKey) * baseDict[baseDictKeys[j]];
+                            nextDict[baseDictKeys[j]] = previousValue % Modulo;
                         }
                     }
                     else
                     {
-                        if (baseDictElement.Key == 1)
+                        if (baseDictKeys[j] == 1)
                         {
                             previousValue = prevDict[p];
-                            nextDict[baseDictElement.Key] = previousValue % Modulo;
+                            nextDict[baseDictKeys[j]] = previousValue % Modulo;
                         }
                         else
                         {
-                            previousValue += (baseDictElement.Key - previousKey) * prevDict[baseDictElement.Value];
-                            nextDict[baseDictElement.Key] = previousValue % Modulo;
+                            previousValue += (baseDictKeys[j] - previousKey) * prevDict[baseDict[baseDictKeys[j]]];
+                            nextDict[baseDictKeys[j]] = previousValue % Modulo;
                         }
                     }
 
-                    previousKey = baseDictElement.Key;
+                    previousKey = baseDictKeys[j];
                 }
 
                 //printDict(nextDict);

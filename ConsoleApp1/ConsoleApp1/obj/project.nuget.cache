@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "tPHX7yugIEr/+MzPczUVfcCW8iCpI/UscPD4KDAs40pvOBuFf4X6wjEUmvlfwxyy3WfuBHZsO0MtrWUPO7hVFQ==",
+  "dgSpecHash": "1M+AaoUrIb4VhbckkS/q/+v/M2sZIaSNh/25IZqSAdekuPXH+J56rNTb/5LmYk8kOdaCZWulIBIsuu6NL0YADQ==",
   "success": true,
-  "projectFilePath": "D:\\Projects\\PSequence\\ConsoleApp1\\ConsoleApp1\\ConsoleApp1.csproj",
+  "projectFilePath": "D:\\Projects\\PSequence\\psequence\\ConsoleApp1\\ConsoleApp1\\ConsoleApp1.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
