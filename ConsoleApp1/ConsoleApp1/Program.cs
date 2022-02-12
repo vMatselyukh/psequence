@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -22,12 +23,12 @@ namespace ConsoleApp1
         public static long pSequences(int n, int p)
         {
             const int Modulo = 1000000007;
-            SortedDictionary<int, int> sortedBaseDict = new SortedDictionary<int, int>();
-            Dictionary<int, int> baseDict = new Dictionary<int, int>();
-            Dictionary<int, int> diffDict = new Dictionary<int, int>();
-            Dictionary<int, long> prevDict = new Dictionary<int, long>();
-            Dictionary<int, long> nextDict = new Dictionary<int, long>();
-
+            SortedDictionary<long, int> sortedBaseDict = new SortedDictionary<long, int>();
+            
+            //base list contains keys of p sequence. for 3,4 it'll be 1,2,4.
+            List<long> baseList = new List<long>();
+            //diff list contains differences between keys. for 3,4 it'll be 1,1,2
+            List<long> diffList = new List<long>();
 
             int squareRoot = (int)Math.Sqrt(p);
 
@@ -36,71 +37,51 @@ namespace ConsoleApp1
                 int division = p / i;
 
                 sortedBaseDict[i] = division;
-                prevDict[i] = 0;
-                nextDict[i] = 0;
 
                 if (!sortedBaseDict.ContainsKey(division))
                 {
                     sortedBaseDict[division] = i;
-                    prevDict[division] = 0;
-                    nextDict[division] = 0;
                 }
             }
 
-            baseDict = new Dictionary<int, int>(sortedBaseDict);
+            baseList = new List<long>(sortedBaseDict.Select(sd => sd.Key));
 
-            var baseDictKeys = baseDict.Keys.ToList();//baseDict.Keys.ToHashSet();
-            var baseDictKeysCount = baseDict.Count;
+            var baseListCount = baseList.Count;
 
-            for (int i = 0; i < baseDictKeysCount; i++)
+            for (int i = 0; i < baseListCount; i++)
             {
-                var currentKey = baseDictKeys[i];
-                var previousKey = i == 0 ? 0 : baseDictKeys[i - 1];
+                var currentKey = baseList[i];
+                var previousKey = i == 0 ? 0 : baseList[i - 1];
 
-                diffDict[i] = currentKey - previousKey;
+                diffList.Add(currentKey - previousKey);
             }
 
+            var nextList = new long[baseListCount];
 
             for (int i = 2; i <= n; i++)
             {
                 long previousValue = 0;
-                prevDict = new Dictionary<int, long>(nextDict);
+                var prevList = new long[baseListCount];
 
-                for (int j = 0; j < baseDictKeysCount; j++)
+                if (i == 2)
                 {
-                    //if nothing in previous dict
-                    if (i == 2)
-                    {
-                        if (baseDictKeys[j] == 1)
-                        {
-                            previousValue = baseDict[baseDictKeys[j]];
-                            nextDict[baseDictKeys[j]] = previousValue > Modulo ? previousValue % Modulo : previousValue;
-                        }
-                        else
-                        {
-                            previousValue += diffDict[j] * baseDict[baseDictKeys[j]];
-                            nextDict[baseDictKeys[j]] = previousValue > Modulo ? previousValue % Modulo : previousValue;
-                        }
-                    }
-                    else
-                    {
-                        if (baseDictKeys[j] == 1)
-                        {
-                            previousValue = prevDict[p];
-                            nextDict[baseDictKeys[j]] = previousValue > Modulo ? previousValue % Modulo : previousValue;
-                        }
-                        else
-                        {
-                            previousValue += diffDict[j] * prevDict[baseDictKeys[baseDictKeysCount - j - 1]];
-                            nextDict[baseDictKeys[j]] = previousValue > Modulo ? previousValue % Modulo : previousValue;
-                        }
-                    }
+                    Array.Copy(baseList.ToArray(), prevList, baseListCount);
                 }
+                else
+                {
+                    Array.Copy(nextList, prevList, baseListCount);
+                }
+                
+                nextList = new long[baseListCount];
 
-                //printDict(nextDict);
+                for (int j = 0; j < baseListCount; j++)
+                {
+                    previousValue += diffList[j] * prevList[baseListCount - j - 1];
+                    nextList[j] = (int)(previousValue > Modulo ? previousValue % Modulo : previousValue);
+                }
             }
 
-            return nextDict[p];
+            return nextList[baseListCount - 1];
         }
 
         public static long pSequencesV2(int n, int p)
@@ -206,21 +187,29 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
+            var watch = Stopwatch.StartNew();
             //long result = Result.pSequences(899, 1178162386);
             //long result = Result.pSequences(899, 78162386);
+            long result = Result.pSequences(950, 615236711);
             //long result = Result.pSequences(3, 4);
             //long result = Result.pSequences(3, 10); //147
             //long result = Result.pSequences(4, 10); //544
 
             //################  v2  ################
             //long result = Result.pSequences(899, 1178162386);
-            long result = Result.pSequencesV2(899, 78162386);
+            //long result = Result.pSequencesV2(899, 78162386);
             //long result = Result.pSequencesV2(3, 4);
             //long result = Result.pSequencesV2(3, 10); //147
             //long result = Result.pSequencesV2(4, 10); //544
             //long result = Result.pSequencesV2(500, 1000); //544
 
+            watch.Stop();
+
+            
+
             Console.WriteLine($"result {result}");
+
+            Console.WriteLine($"time {watch.ElapsedMilliseconds}");
         }
     }
 }
